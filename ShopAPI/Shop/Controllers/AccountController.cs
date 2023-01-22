@@ -4,6 +4,7 @@ using DAL.Validation.Account;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Services;
 
 namespace Shop.Controllers
 {
@@ -12,13 +13,15 @@ namespace Shop.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<UserEntity> _userManager;
-        public AccountController(UserManager<UserEntity> userManager)
+        private readonly IJwtTokenService _jwtTokenService;
+        public AccountController(UserManager<UserEntity> userManager, IJwtTokenService jwtTokenService)
         {
             _userManager= userManager;
+            _jwtTokenService= jwtTokenService;
         }
 
-        [HttpPost("Login")]
-        //[Route("login")]
+        [HttpPost]
+        [Route("login")]
         public async Task<IActionResult> LoginAsync([FromBody]LoginViewModel model)
         {
             AccountLoginValidation validator = new AccountLoginValidation();
@@ -33,7 +36,9 @@ namespace Shop.Controllers
             if (!checkPassword) 
                 return BadRequest(new {error = "Password incorrect."});
 
-            return Ok(model);
+            string token = await _jwtTokenService.CreateTokenAsync(user);
+
+            return Ok(new {token});
         }
     }
 }

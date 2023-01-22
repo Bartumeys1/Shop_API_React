@@ -3,6 +3,7 @@ using DAL.Entities.Identity;
 using DAL.Initializer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,10 @@ builder.Services.AddIdentity<UserEntity,RoleEntity>(opt =>
 }).AddEntityFrameworkStores<AppEFContext>()
 .AddDefaultTokenProviders();
 
+//Add Jwt service
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+//Add controllers
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
