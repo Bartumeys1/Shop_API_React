@@ -1,4 +1,7 @@
 using DAL;
+using DAL.Entities.Identity;
+using DAL.Initializer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +13,16 @@ builder.Services.AddDbContext<AppEFContext>(opt =>
 });
 
 // Add services to the container.
+
+builder.Services.AddIdentity<UserEntity,RoleEntity>(opt =>
+{
+    opt.Password.RequireDigit=false;
+    opt.Password.RequiredLength=5;
+    opt.Password.RequireNonAlphanumeric=false;
+    opt.Password.RequireUppercase=false;
+    opt.Password.RequireLowercase=false;
+}).AddEntityFrameworkStores<AppEFContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -28,5 +41,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.SeedData();
 
 app.Run();
