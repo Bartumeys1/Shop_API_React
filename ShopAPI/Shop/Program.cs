@@ -4,6 +4,7 @@ using DAL.Initializer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Services;
+using Shop.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,11 @@ builder.Services.AddIdentity<UserEntity,RoleEntity>(opt =>
     opt.Password.RequireLowercase=false;
 }).AddEntityFrameworkStores<AppEFContext>()
 .AddDefaultTokenProviders();
+
+//Add section appjson injection
+var googleAuthSettings = builder.Configuration
+    .GetSection("GoogleAuthSettings")
+    .Get<GoogleAuthSettings>();
 
 //Add Jwt service
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();

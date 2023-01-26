@@ -1,4 +1,6 @@
-﻿using DAL.Entities.Identity;
+﻿using DAL.Data.ViewModels;
+using DAL.Entities.Identity;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +13,7 @@ namespace Services
     public interface IJwtTokenService
     {
         Task<string> CreateTokenAsync(UserEntity user);
+        Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenAsync(ExternalLoginRequest request);
     }
     public class JwtTokenService : IJwtTokenService
     {
@@ -45,6 +48,18 @@ namespace Services
                 claims: claims
                 );
             return new JwtSecurityTokenHandler().WriteToken(jwt);
+        }
+
+        public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleTokenAsync(ExternalLoginRequest request)
+        {
+            string clientID = _configuration["GoogleAuthSettings:ClientId"];
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string>() { clientID }
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(request.Token, settings);
+            return payload;
         }
     }
 }
