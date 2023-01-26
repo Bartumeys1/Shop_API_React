@@ -1,4 +1,5 @@
-﻿using DAL.Data.ViewModels;
+﻿using DAL.Data.Constants;
+using DAL.Data.ViewModels;
 using DAL.Entities.Identity;
 using DAL.Validation.Account;
 using FluentValidation.Results;
@@ -13,11 +14,13 @@ namespace Shop.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<UserEntity> _userManager;
+        private readonly RoleManager<RoleEntity> _roleManager;
         private readonly IJwtTokenService _jwtTokenService;
-        public AccountController(UserManager<UserEntity> userManager, IJwtTokenService jwtTokenService)
+        public AccountController(UserManager<UserEntity> userManager, IJwtTokenService jwtTokenService, RoleManager<RoleEntity> roleManager)
         {
             _userManager = userManager;
             _jwtTokenService = jwtTokenService;
+            _roleManager = roleManager;
         }
 
         [HttpPost]
@@ -66,6 +69,7 @@ namespace Shop.Controllers
                             LastName = payload.FamilyName
                         };
                         var resultCreate = await _userManager.CreateAsync(user);
+                        var res = await _userManager.AddToRoleAsync(user, Roles.User);
                         if (!resultCreate.Succeeded)
                         {
                             return BadRequest(new { error = "Помилка створення користувача" });
@@ -78,7 +82,7 @@ namespace Shop.Controllers
                     }
                 }
                 string token = await _jwtTokenService.CreateTokenAsync(user);
-                return Ok(new { token });
+                return Ok(new { info.LoginProvider, token });
             }
             catch (Exception ex)
             {

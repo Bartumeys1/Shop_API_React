@@ -31,11 +31,17 @@ var googleAuthSettings = builder.Configuration
     .GetSection("GoogleAuthSettings")
     .Get<GoogleAuthSettings>();
 
+builder.Services.AddSingleton(googleAuthSettings);
+
 //Add Jwt service
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 //Add controllers
 builder.Services.AddControllers();
+
+//Add Cors
+builder.Services.AddCors();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -50,6 +56,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+
+app.UseCors(options =>
+            options.AllowAnyMethod()
+            .AllowAnyOrigin()
+            .AllowAnyHeader());
 
 app.MapControllers();
 

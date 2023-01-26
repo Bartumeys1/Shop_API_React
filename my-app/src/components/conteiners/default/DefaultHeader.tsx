@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
+import { useActions } from "../../../hooks/useActions";
+import { useTypedSelector } from "../../../hooks/useTypedSelector";
 
 const DefaultHeader = () => {
+  const { name } = useTypedSelector((store) => store.account);
+  const{Logout} = useActions();
   return (
     <header>
       <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -28,16 +32,32 @@ const DefaultHeader = () => {
               </li>
             </ul>
             <ul className="navbar-nav">
-              <li className="nav-item">
-                <Link className="nav-link" aria-current="page" to="/register">
-                  Реєстрація
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" aria-current="page" to="/login">
-                  Вхід
-                </Link>
-              </li>
+              {!name ? (
+                <>
+                  <li className="nav-item">
+                    <Link
+                      className="nav-link"
+                      aria-current="page"
+                      to="/register"
+                    >
+                      Реєстрація
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" aria-current="page" to="/login">
+                      Вхід
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <label className="nav-link">{name}</label>
+                  <li className="nav-item">
+                    <input type="button" className="nav-link" style={{border:0 , backgroundColor:"inherit"}} onClick={Logout} value="Вихід" />
+
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>
