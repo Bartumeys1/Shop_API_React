@@ -2,9 +2,11 @@
 using DAL.Data.ViewModels;
 using DAL.Entities.Identity;
 using DAL.Validation.Account;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Services;
 
 namespace Shop.Controllers
@@ -14,13 +16,11 @@ namespace Shop.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<UserEntity> _userManager;
-        private readonly RoleManager<RoleEntity> _roleManager;
         private readonly IJwtTokenService _jwtTokenService;
-        public AccountController(UserManager<UserEntity> userManager, IJwtTokenService jwtTokenService, RoleManager<RoleEntity> roleManager)
+        public AccountController(UserManager<UserEntity> userManager, IJwtTokenService jwtTokenService)
         {
             _userManager = userManager;
             _jwtTokenService = jwtTokenService;
-            _roleManager = roleManager;
         }
 
         [HttpPost]
@@ -88,6 +88,39 @@ namespace Shop.Controllers
             {
                 return BadRequest(ex);
             }
+        }
+
+        [HttpPost]
+        [Route("registration")]
+        public async Task<IActionResult> RegistrationAsync([FromBody]RegistrationViewModel model)
+        {
+            AccountRegistrationValidation validator = new AccountRegistrationValidation();
+            ValidationResult validationResult = await validator.ValidateAsync(model);
+            if (!validationResult.IsValid) return BadRequest(validationResult.Errors);
+
+            UserEntity user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+                return BadRequest(new { error = "User with this email is already registrated." });
+
+            if (!model.Password.Equals(model.ConfirmPassword))
+                return BadRequest(new { error = "Error passwords are not equal." });
+
+            user = new UserEntity
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                Email = model.Email,
+                UserName = model.Email,
+            };
+            var resultCreate = await _userManager.CreateAsync(user,model.Password);
+            if (!resultCreate.Succeeded)
+            {
+                return BadRequest(new { error = "Помилка реєстрації користувача" });
+            }
+            var res = await _userManager.AddToRoleAsync(user, Roles.User);
+
+            return Ok();
         }
     }
 }
