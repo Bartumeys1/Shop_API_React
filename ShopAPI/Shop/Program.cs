@@ -3,6 +3,7 @@ using DAL.Entities.Identity;
 using DAL.Initializer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Services;
 using Shop.Settings;
 
@@ -56,6 +57,17 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+
+string dir = Path.Combine(Directory.GetCurrentDirectory(),"images");
+if (!Directory.Exists(dir))
+{
+    Directory.CreateDirectory(dir);
+}
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider=new PhysicalFileProvider(dir),
+    RequestPath="/images"
+});
 
 app.UseCors(options =>
             options.AllowAnyMethod()
