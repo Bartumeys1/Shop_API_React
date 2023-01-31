@@ -25,7 +25,7 @@ export  const Login = (user:IUserLogin) => async (dispatch: Dispatch<AccountAuth
 export  const GoogleExternalLogin = (googleData:IGoogleExternalLogin) => async (dispatch: Dispatch<AccountAuth>) => {
     console.log("data in google login ",googleData);
     try {
-        googleData.provider="Google";
+        
         const resp = await http.post<IUserLoginResponse>("api/Account/GoogleExternalLogin",googleData);
         const {data} = resp;
         const userInfo:IUserState = jwtDecode(data.token);

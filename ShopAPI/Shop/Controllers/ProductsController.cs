@@ -23,10 +23,10 @@ namespace Shop.Controllers
                 }
             }
 
-            string post = string.Empty;
+            string port = string.Empty;
             if(Request.Host.Port !=null)
-                 post= ":"+Request.Host.Port.ToString();
-            string url = $@"{Request.Scheme}://{Request.Host.Host}{post}/images/{fileName}";
+                 port= ":"+Request.Host.Port.ToString();
+            string url = $@"{Request.Scheme}://{Request.Host.Host}{port}/images/{fileName}";
             return Ok(url);
         }
     }

@@ -1,37 +1,32 @@
 import { useFormik } from "formik";
-import jwtDecode from "jwt-decode";
 import {  useEffect, useState } from "react";
 import { useActions } from "../../../hooks/useActions";
-import http from "../../../http_common";
-import { IGoogleExternalLogin, IUserLogin, IUserLoginResponse, IUserState } from "./store/type";
+import { IGoogleExternalLogin, IUserLogin } from "./store/type";
 
 
 const LoginPage =() => {
     
-  const {Login}=useActions();
+  const {Login , GoogleExternalLogin}=useActions();
   const [loginData, setloginData] = useState<IUserLogin>({
     email:"",
     password:""
   });
 
-  //  async function  Test(credential:IGoogleExternalLogin){
-  //   console.log("Test func");
-  //   await GoogleExternalLogin(credential);
-  // }
-    const handleLoginSuccess = (res: any) => {
-        console.log("Login google result", res);
+    const handleLoginSuccess = (res: any) => {  
         const {credential} = res;
         
         const element:IGoogleExternalLogin ={
           provider : "Google",
           token: credential
         }
-        http.post<IUserLoginResponse>("api/Account/GoogleExternalLogin",element).then((resp)=>{
-          const {data} = resp;
+        
+        // http.post<IUserLoginResponse>("api/Account/GoogleExternalLogin",element).then((resp)=>{
+        //   const {data} = resp;
 
-          const userInfo:IUserState = jwtDecode(data.token);
-         console.log("userInfo",userInfo);
-        })
+        //   const userInfo:IUserState = jwtDecode(data.token);
+        //  console.log("userInfo",userInfo);
+        // })
+        GoogleExternalLogin(element);
       };
     
       useEffect(() => {
@@ -62,7 +57,6 @@ const LoginPage =() => {
       const{handleSubmit , handleChange, values}=formik;
     return (
         <>
-        <section className="vh-100">
   <div className="container py-5 h-100">
   <h1 className="text-center"> Вхід</h1>
     <div className="row d-flex align-items-center justify-content-center h-100">
@@ -93,13 +87,15 @@ const LoginPage =() => {
             <p className="text-center fw-bold mx-3 mb-0 text-muted">Або</p>
           </div>
             
-          <div id="loginGoogleBtn" ></div>
+            <div>
+            <div id="loginGoogleBtn" ></div>
+
+            </div>
 
         </form>
       </div>
     </div>
   </div>
-</section>
 
         </>
     );
