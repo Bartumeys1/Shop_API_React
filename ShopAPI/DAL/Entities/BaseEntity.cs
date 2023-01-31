@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using System.ComponentModel.DataAnnotations;
 
 namespace DAL.Entities
 {
-    public interface IEntity
+    public interface IEntity<T>
     {
-
+        T Id { get; set; }
+        bool IsDelete { get; set; }
+        DateTime DateCreated { get; set; }
     }
-    public  class BaseEntity
+    public abstract class BaseEntity<T> : IEntity<T>
     {
+        [Key]
+        public T Id { get; set; }
+        public bool IsDelete { get; set; }
+        public DateTime DateCreated { get; set; }
     }
 }

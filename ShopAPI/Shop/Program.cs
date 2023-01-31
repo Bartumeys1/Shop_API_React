@@ -1,6 +1,8 @@
 using DAL;
 using DAL.Entities.Identity;
 using DAL.Initializer;
+using DAL.Interfaces;
+using DAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -32,13 +34,17 @@ var googleAuthSettings = builder.Configuration
     .GetSection("GoogleAuthSettings")
     .Get<GoogleAuthSettings>();
 
-builder.Services.AddSingleton(googleAuthSettings);
 
-//Add Jwt service
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddSingleton(googleAuthSettings);
 
 //Add controllers
 builder.Services.AddControllers();
+//Add Jwt service
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+
+//Add Repositories
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 //Add Cors
 builder.Services.AddCors();

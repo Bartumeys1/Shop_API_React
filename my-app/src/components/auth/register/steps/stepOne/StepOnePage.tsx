@@ -49,55 +49,59 @@ const StepOnePage: React.FC<IStepOneProps> = ({ onStepNext }) => {
                 {(formik) => (
                   <form onSubmit={formik.handleSubmit}>
                     {/* Email input  */}
-                    <div className="form-outline mb-4">
-                      <label htmlFor="email" className="form-label">
-                        Електронна пошта
-                      </label>
+                    <div className="form-floating mb-4">
                       <Field
                         name="email"
                         type="text"
                         className="form-control form-control-lg"
+                        placeholder="name@exampl.com"
                       />
+                       <label htmlFor="email" className="form-label">
+                        Електронна пошта
+                      </label>
                       {errorMessage("email")}
                     </div>
 
                     {/* First name input  */}
-                    <div className="form-outline mb-4">
-                      <label htmlFor="firstName" className="form-label">
-                        Ім'я
-                      </label>
+                    <div className="form-floating mb-4">
                       <Field
                         name="firstName"
                         type="text"
                         className="form-control form-control-lg"
+                        placeholder="Name"
                       />
+                                            <label htmlFor="firstName" className="form-label">
+                        Ім'я
+                      </label>
                       {errorMessage("firstName")}
                     </div>
 
                     {/* Second name input  */}
-                    <div className="form-outline mb-4">
-                      <label htmlFor="secondName" className="form-label">
-                        Призвіще
-                      </label>
+                    <div className="form-floating mb-4">
                       <Field
                         name="secondName"
                         type="text"
                         className="form-control form-control-lg"
+                        placeholder="secondName"
                       />
+                      <label htmlFor="secondName" className="form-label">
+                        Призвіще
+                      </label>
                       {errorMessage("secondName")}
                     </div>
 
                     {/* Phone field input  */}
-                    <div className="form-outline mb-4">
-                      <label htmlFor="phone" className="form-label">
-                        Телефон
-                      </label>
+                    <div className="form-floating mb-4">
                       <Field
                         name="phone"
                         type="text"
                         className="form-control form-control-lg"
                         value={formik.values.phone}
+                        placeholder="phone"
                       />
+                      <label htmlFor="phone" className="form-label">
+                        Телефон
+                      </label>
                       {errorMessage("phone")}
                     </div>
 

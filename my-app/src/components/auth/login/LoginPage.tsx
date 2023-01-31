@@ -66,17 +66,20 @@ const LoginPage =() => {
       <div className="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
         <form onSubmit={handleSubmit}>
            {/* Email input  */}
-          <div className="form-outline mb-4">
-            <label className="form-label" htmlFor="email">Електрона пошта</label>
-            <input type="email" id="email" name="email" className="form-control form-control-lg" onChange={handleChange}
+          <div className="form-floating mb-4">
+            <input type="email" id="email" name="email" className="form-control form-control-lg" placeholder="name@example.com"
+            onChange={handleChange}
          value={values.email}/>
+            <label htmlFor="email">Електрона пошта</label>
           </div>
       
 
            {/* Password input  */}
-          <div className="form-outline mb-4">
+          <div className="form-floating mb-4">
+            <input type="password" id="password" name="password" className="form-control form-control-lg" placeholder="Password"
+             onChange={handleChange} 
+             value={values.password} />
             <label className="form-label" htmlFor="password">Пароль</label>
-            <input type="password" id="password" name="password" className="form-control form-control-lg"  onChange={handleChange} value={values.password} />
           </div>
 
            {/* Submit button  */}

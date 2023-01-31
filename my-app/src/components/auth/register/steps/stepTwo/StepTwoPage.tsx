@@ -34,10 +34,7 @@ const StepTwoPage: React.FC<IStepTwoProps> = ({ onStepNext }) => {
             <div className="col-md-7 col-lg-5 col-xl-5">
               <form onSubmit={handleSubmit}>
                 {/* Password input  */}
-                <div className="form-outline mb-4">
-                  <label className="form-label" htmlFor="password">
-                    Пароль
-                  </label>
+                <div className="form-floating mb-4">
                   <input
                     type="password"
                     id="password"
@@ -46,17 +43,19 @@ const StepTwoPage: React.FC<IStepTwoProps> = ({ onStepNext }) => {
                     onChange={handleChange}
                     value={values.password}
                     onBlur={handleBlur}
+                    placeholder="Password"
                   />
+                                    <label className="form-label" htmlFor="password">
+                    Пароль
+                  </label>
                   {formik.touched.password && formik.errors.password ? (
                     <div style={{color:"red"}}>{formik.errors.password}</div>
                   ) : null}
                 </div>
 
                 {/* Password confirm input  */}
-                <div className="form-outline mb-4">
-                  <label className="form-label" htmlFor="confirmPassword">
-                    Повторити пароль
-                  </label>
+                <div className="form-floating mb-4">
+
                   <input
                     type="password"
                     id="confirmPassword"
@@ -65,8 +64,11 @@ const StepTwoPage: React.FC<IStepTwoProps> = ({ onStepNext }) => {
                     onChange={handleChange}
                     value={values.confirmPassword}
                     onBlur={handleBlur}
-
+                    placeholder="confirmPassword"
                   />
+                                    <label className="form-label" htmlFor="confirmPassword">
+                    Повторити пароль
+                  </label>
                   {formik.touched.confirmPassword &&
                   formik.errors.confirmPassword ? (
                     <div style={{color:"red"}}>{formik.errors.password}</div>
