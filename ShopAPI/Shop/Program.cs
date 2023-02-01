@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Services;
+using Services.Interfaces;
+using Services.Services;
 using Shop.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +43,8 @@ builder.Services.AddSingleton(googleAuthSettings);
 builder.Services.AddControllers();
 //Add Jwt service
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
 
 
 //Add Repositories
