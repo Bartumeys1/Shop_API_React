@@ -13,6 +13,7 @@ namespace DAL
         public AppEFContext(DbContextOptions<AppEFContext> options) :base(options){}
 
         public DbSet<CategoryEntity> Categories { get; set; }
+        public DbSet<ProductEntity> Products { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -29,6 +30,13 @@ namespace DAL
                     .WithMany(u=>u.UserRoles)
                     .HasForeignKey(r=>r.UserId)
                     .IsRequired();
+            });
+
+            builder.Entity<ProductEntity>(p =>{
+                p.HasOne(p => p.Category)
+                .WithMany(p => p.Products)
+                .HasForeignKey(p => p.CategoryId)
+                .IsRequired();
             });
 
         }

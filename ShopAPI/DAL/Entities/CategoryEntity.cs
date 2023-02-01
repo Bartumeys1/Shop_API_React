@@ -12,6 +12,10 @@ namespace DAL.Entities
         [StringLength(255)]
         public string  Image { get; set; }
 
-     //   public virtual ICollection<ProductEntity> Products { get; set; }
+        public virtual ICollection<ProductEntity> Products { get; set; }
+        public CategoryEntity()
+        {
+            Products = new List<ProductEntity>();
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using DAL.Data.ViewModels;
-using Microsoft.AspNetCore.Http;
+using DAL.Entities;
+using DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Services.Models.Products;
 
 namespace Shop.Controllers
 {
@@ -8,6 +10,14 @@ namespace Shop.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
+        private readonly IProductRepository _repositoryProduct; 
+        private readonly ICategoryRepository _repositoryCategory; 
+        public ProductsController( IProductRepository productRepository  , ICategoryRepository categoryRepository)
+        {
+            _repositoryProduct = productRepository;
+            _repositoryCategory = categoryRepository;
+        }
+
         [HttpPost]
         [Route("UploadImage")]
         public async Task<IActionResult> UploadImageAsync([FromForm] ProductUploadImageViewModels model)
@@ -28,6 +38,24 @@ namespace Shop.Controllers
                  port= ":"+Request.Host.Port.ToString();
             string url = $@"{Request.Scheme}://{Request.Host.Host}{port}/images/{fileName}";
             return Ok(url);
+        }
+
+        [HttpPost]
+        [Route("Create")]
+        public async Task<IActionResult> AddProductAsync([FromBody] CreateProductVM model)
+        {
+
+            CategoryEntity categ = await _repositoryCategory.GetById(model.CategoryId);
+
+            ProductEntity productEntity = new ProductEntity();
+            productEntity.Name = model.ProductName;
+            productEntity.Description = model.ProductDescription;
+            productEntity.Price = model.Price;
+            productEntity.Category = categ;
+            productEntity.DateCreated = DateTime.Now.ToUniversalTime(); 
+             await _repositoryProduct.Create(productEntity);
+
+            return Ok(productEntity);
         }
     }
 }

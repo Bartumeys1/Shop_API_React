@@ -47,8 +47,10 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 
 
+
 //Add Repositories
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 //Add Cors
 builder.Services.AddCors();
