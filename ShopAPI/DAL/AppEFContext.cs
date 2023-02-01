@@ -33,8 +33,8 @@ namespace DAL
             });
 
             builder.Entity<ProductEntity>(p =>{
-                p.HasOne(p => p.Category)
-                .WithMany(p => p.Products)
+                p.HasOne<CategoryEntity>(p => p.Category)
+                .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
                 .IsRequired();
             });

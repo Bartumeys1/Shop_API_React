@@ -45,14 +45,15 @@ namespace Shop.Controllers
         public async Task<IActionResult> AddProductAsync([FromBody] CreateProductVM model)
         {
 
-            CategoryEntity categ = await _repositoryCategory.GetById(model.CategoryId);
+           // CategoryEntity categ = await _repositoryCategory.GetById(model.CategoryId);
 
             ProductEntity productEntity = new ProductEntity();
             productEntity.Name = model.ProductName;
             productEntity.Description = model.ProductDescription;
             productEntity.Price = model.Price;
-            productEntity.Category = categ;
-            productEntity.DateCreated = DateTime.Now.ToUniversalTime(); 
+            productEntity.CategoryId = model.CategoryId;
+            productEntity.DateCreated = DateTime.UtcNow; 
+
              await _repositoryProduct.Create(productEntity);
 
             return Ok(productEntity);

@@ -19,6 +19,11 @@ namespace DAL.Initializer
                 RoleManager<RoleEntity> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<RoleEntity>>();
                 var categoryRepository = scope.ServiceProvider.GetRequiredService<ICategoryRepository>();
                 var productsRepository = scope.ServiceProvider.GetRequiredService<IProductRepository>();
+
+                var context = scope.ServiceProvider.GetRequiredService<AppEFContext>();
+
+                context.Database.Migrate();
+
                 if(!roleManager.Roles.Any())
                 {
                     IdentityResult result = roleManager.CreateAsync(new RoleEntity
@@ -46,50 +51,59 @@ namespace DAL.Initializer
                     IdentityResult result = userManager.CreateAsync(user,"123456").Result;
                     result = userManager.AddToRoleAsync(user, Roles.Administrator).Result;
                 }
-                
-                if(!categoryRepository.Categories.Any())
+
+                if (!categoryRepository.Categories.Any())
                 {
-                    CategoryEntity[] categories = { 
-                        new CategoryEntity() { Id = 1, Name = "Ноутбуки", DateCreated = DateTime.Now.ToUniversalTime() },
-                        new CategoryEntity() { Id = 2, Name = "Одяг", DateCreated = DateTime.Now.ToUniversalTime()}
+                    CategoryEntity[] categories = {
+                        new CategoryEntity() { Name = "Ноутбуки", DateCreated = DateTime.Now.ToUniversalTime() },
+                        new CategoryEntity() { Name = "Одяг", DateCreated = DateTime.Now.ToUniversalTime()}
+
                     };
 
+                    foreach (var item in categories)
+                    {
+                        await categoryRepository.Create(item);
+                    }
+                };
 
+
+                if(!productsRepository.Products.Any())
+                { 
                     List<ProductEntity> products = new List<ProductEntity>() { 
                         // Ноутбуки
-                        new ProductEntity() { Id = 1, 
+                        new ProductEntity() {
                             Name="Hp Pavelion", 
-                            Category = categories[0], 
+                            CategoryId = 1, 
                             Description="Простий ноутбук Hp Pavelion ... ", 
                             Price= 200.12F, 
                             DateCreated = DateTime.Now.ToUniversalTime()
                         },
-                        new ProductEntity() { Id = 2,
+                        new ProductEntity() {
                             Name="Alienwaer",
-                            Category = categories[0],
+                            CategoryId = 1,
                             Description=" Найкращий ноутбук Alienwaer ... ",
                             Price= 1350.0F,
                             DateCreated = DateTime.Now.ToUniversalTime()
                         },
-                        new ProductEntity() { Id = 3,
+                        new ProductEntity() {
                             Name="Macbook",
-                            Category = categories[0],
+                            CategoryId = 1,
                             Description="Ноутбук для дівчот ... ",
                             Price= 2000.0F,
                             DateCreated = DateTime.Now.ToUniversalTime()
                         },
 
                         //Одежа
-                        new ProductEntity() { Id = 4,
+                        new ProductEntity() {
                             Name="Jeans",
-                            Category = categories[1],
+                            CategoryId = 2,
                             Description=" Пара гарних недорогіх джинсів ... ",
                             Price= 19.50F,
                             DateCreated = DateTime.Now.ToUniversalTime()
                         }, 
-                        new ProductEntity() { Id = 5,
+                        new ProductEntity() {
                             Name="Sweater",
-                            Category = categories[1],
+                            CategoryId = 2,
                             Description="Недорогий світер ... ",
                             Price= 25.0F,
                             DateCreated = DateTime.Now.ToUniversalTime()

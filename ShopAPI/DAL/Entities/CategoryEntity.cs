@@ -13,9 +13,6 @@ namespace DAL.Entities
         public string  Image { get; set; }
 
         public virtual ICollection<ProductEntity> Products { get; set; }
-        public CategoryEntity()
-        {
-            Products = new List<ProductEntity>();
-        }
+
     }
 }

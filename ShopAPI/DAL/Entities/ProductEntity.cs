@@ -18,7 +18,8 @@ namespace DAL.Entities
         public float Price { get; set; }   
         [Required]
         public string Description { get; set; }
+
         public int CategoryId { get; set; }
-        public CategoryEntity Category { get; set; }
+        public virtual CategoryEntity Category { get; set; }
     }
 }
