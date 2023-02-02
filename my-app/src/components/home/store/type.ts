@@ -1,40 +1,34 @@
-export interface IProductItem {
-    id: number,
-    name: string,
-    detail: string,
-    created_at: string
+export interface ICategoryItem {
+  id: number|string
+  imageUrl:string,
+  name: string,
   }
 
-export interface IProductResponse {
-    data: Array<IProductItem>,
-    current_page: number,
-    total: number,
-    last_page: number
+export interface ICategoryResponse {
+  payload: Array<ICategoryItem>
+  message:string,
 }
 
-export interface IProductState {
-    list: Array<IProductItem>
-    current_page: number,
-    total: number,
-    count_pages: number,
+export interface ICategoryState {
+    list: Array<ICategoryItem>
+    message:string,
     isLoaded:boolean
-}
-export interface IProductSearch {
-    name?: string,
-    page?: number|string|null
-    count?:number|string|null
-}
-
-
-  export enum ProductActionTypes {
-    PRODUCT_LIST = "PRODUCT_LIST",
-    SET_CURRENT_PRODUCT = "SET_CURRENT_PRODUCT",
-    CREATE_PRODUCT = "CREATE_PRODUCT",
-    PRODUCT_PAGE = "PRODUCT_PAGE",
   }
 
-  export interface GetProductAction {
-    type: ProductActionTypes.PRODUCT_LIST,
-    payload: IProductState
+  export enum CategoryActionTypes {
+    CATEGORY_LIST = "CATEGORY_LIST",
+    CREATE_CATEGORY = "CREATE_CATEGORY",
+    SELECT_CATEGORY = "SELECT_CATEGORY",
+
+  }
+
+  export interface GetCategoryAction {
+    type: CategoryActionTypes.CATEGORY_LIST,
+    payload: ICategoryState
 }
-export type ProductActions= | GetProductAction;
+
+export interface SelectCategoryAction {
+  type: CategoryActionTypes.SELECT_CATEGORY,
+  payload: ICategoryState
+}
+export type CategoryActions= | GetCategoryAction|SelectCategoryAction;

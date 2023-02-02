@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Services;
 using Services.Interfaces;
 using Services.Models.Categories;
+using Services;
 
 namespace Shop.Controllers
 {
@@ -17,7 +17,7 @@ namespace Shop.Controllers
 
         [HttpPost]
         [Route("Create")]
-        public async Task<IActionResult> CreateAsync([FromBody]CreateCategoryVM model)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateCategoryVM model)
         {
             ServiceResponse result = await _categoryService.CreateAsync(model);
             if (!result.IsSuccess)
@@ -52,11 +52,20 @@ namespace Shop.Controllers
         [Route("GetAllCategories")]
         public async Task<IActionResult> GetAllCategoriesAsync()
         {
-            ServiceResponse result = await _categoryService.GetAllCategoriesAsync();
+            ServiceResponse result = await _categoryService.GetAllCategoriesAsync(Request);
             if (!result.IsSuccess)
                 return BadRequest(result);
 
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("ReserveAndRecover")]
+        public async Task<IActionResult> ReserveAndRecoverAsync(int id)
+        {
+            var res = await _categoryService.ReserveAndRecoverAsync(id);
+
+            return Ok(res);
         }
     }
 }

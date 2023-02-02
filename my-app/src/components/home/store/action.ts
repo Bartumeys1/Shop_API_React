@@ -1,24 +1,25 @@
-import { ProductActions, IProductResponse, ProductActionTypes, IProductSearch } from './type';
+
 import { Dispatch } from "react";
 import http from '../../../http_common';
+import { CategoryActions, CategoryActionTypes, ICategoryResponse } from "./type";
 
-export const GetProductList = (search: IProductSearch) => async (dispatch: Dispatch<ProductActions>) => {
+export const GetCategoryList = () => async (dispatch: Dispatch<CategoryActions>) => {
     try {
-        const resp = await http.get<IProductResponse>("/api/products",{params: search});
+        const resp = await http.get<ICategoryResponse>("/api/Categories/GetAllCategories");
         const {data} = resp;
+        console.log("GetAllCategories: ",data);
+        
         dispatch({
-            type: ProductActionTypes.PRODUCT_LIST, 
-            payload: {
-                list: data.data,
-                count_pages: data.last_page,
-                current_page: data.current_page,
-                total: data.total,
+            type: CategoryActionTypes.CATEGORY_LIST, 
+            payload:{
+                message:data.message,
+                list:data.payload,
                 isLoaded:true
             }});
-
     }
     catch(err: any)
     {
 
     }
 }
+

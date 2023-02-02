@@ -1,7 +1,9 @@
-﻿using DAL.Data.ViewModels;
-using DAL.Entities;
+﻿using DAL;
 using DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Services;
+using Services.Interfaces;
 using Services.Models.Products;
 
 namespace Shop.Controllers
@@ -10,53 +12,42 @@ namespace Shop.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductRepository _repositoryProduct; 
-        private readonly ICategoryRepository _repositoryCategory; 
-        public ProductsController( IProductRepository productRepository  , ICategoryRepository categoryRepository)
+        private readonly IProductService _productService;
+        private readonly IProductRepository _productRepository;
+        public ProductsController(IProductService productService, IProductRepository productRepository)
         {
-            _repositoryProduct = productRepository;
-            _repositoryCategory = categoryRepository;
+            _productService = productService;
+            _productRepository= productRepository;
         }
 
-        [HttpPost]
-        [Route("UploadImage")]
-        public async Task<IActionResult> UploadImageAsync([FromForm] ProductUploadImageViewModels model)
-        {
-            string fileName = string.Empty;
-            if(model.Image != null) {
-                string fileExt = Path.GetExtension(model.Image.FileName);
-                string dir = Path.Combine(Directory.GetCurrentDirectory(),"images");
-                fileName = Path.GetRandomFileName()+fileExt;
-                using (var stream = System.IO.File.Create(Path.Combine(dir, fileName)))
-                {
-                    await model.Image.CopyToAsync(stream);
-                }
-            }
 
-            string port = string.Empty;
-            if(Request.Host.Port !=null)
-                 port= ":"+Request.Host.Port.ToString();
-            string url = $@"{Request.Scheme}://{Request.Host.Host}{port}/images/{fileName}";
-            return Ok(url);
-        }
 
         [HttpPost]
         [Route("Create")]
         public async Task<IActionResult> AddProductAsync([FromBody] CreateProductVM model)
         {
+            ServiceResponse res = await _productService.AddProductAsync(model);
 
-           // CategoryEntity categ = await _repositoryCategory.GetById(model.CategoryId);
+            if (res.IsSuccess)
+                return Ok(res);
 
-            ProductEntity productEntity = new ProductEntity();
-            productEntity.Name = model.ProductName;
-            productEntity.Description = model.ProductDescription;
-            productEntity.Price = model.Price;
-            productEntity.CategoryId = model.CategoryId;
-            productEntity.DateCreated = DateTime.UtcNow; 
+            return BadRequest(res);
+        }
 
-             await _repositoryProduct.Create(productEntity);
+        [HttpPost]
+        [Route("GetAllByCategory")]
+        public async Task<IActionResult> GetProductByCategory([FromBody] ProductsByCategoryVM model)
+        {
+          // var result =  await _productService.GetProductByCategory(model);
 
-            return Ok(productEntity);
+            var result = await _productRepository.Products.Where(p => p.CategoryId == model.CategoryId).ToListAsync();
+
+            var resp = new ServiceResponse
+            {
+                IsSuccess = true,
+                Payload = result
+            };
+            return Ok(resp);
         }
     }
 }

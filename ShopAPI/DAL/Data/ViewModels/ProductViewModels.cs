@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DAL.Data.ViewModels
 {
-    public class ProductUploadImageViewModels
+    public class UploadImageViewModels
     {
         public IFormFile Image { get; set; }
     }

@@ -7,7 +7,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Services;
+using Services.Services;
 
 namespace Shop.Controllers
 {
