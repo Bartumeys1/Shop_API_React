@@ -1,29 +1,36 @@
 ﻿
+using AutoMapper;
 using DAL.Entities;
 using DAL.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Models.Categories;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Services.Services
 {
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
-        public CategoryService(ICategoryRepository categoryRepository) {
-        
+        private readonly IImageService _imageService;
+        private readonly IMapper _mapper;
+        public CategoryService(ICategoryRepository categoryRepository, IImageService  imageService, IMapper mapper)
+        {
+
             _categoryRepository = categoryRepository;
+            _imageService = imageService;
+            _mapper = mapper;
         }
 
-        public async Task<ServiceResponse> CreateAsync(CreateCategoryVM model) // mapper
+        public async Task<ServiceResponse> CreateAsync(CreateCategoryVM model )
         {
-            CategoryEntity category = new CategoryEntity() {
-                Name = model.Name,
-                Image = model.ImageBase64,
-                DateCreated = DateTime.Now.ToUniversalTime()
-            };                
+             var res = await _imageService.AddCategoryImage(model);
+            if (!res.IsSuccess)
+                return res;
+
+            CategoryEntity category=_mapper.Map<CategoryEntity>(model);
+            category.Image = (string)res.Payload;
+               
             try
             {
                 await _categoryRepository.Create(category);
@@ -47,7 +54,7 @@ namespace Services.Services
 
 
 
-        public async Task<ServiceResponse> DeleteAsync(int id)
+        public async Task<ServiceResponse> DeleteAsync(int id , HttpRequest request)
         {
             CategoryEntity category = await _categoryRepository.GetById(id);
             if(category == null)
@@ -56,8 +63,10 @@ namespace Services.Services
                     IsSuccess = false,
                     Message = "Такої категорії немає."
                 };
-           
-                await _categoryRepository.Delete(id);
+
+             await _categoryRepository.Delete(id);
+            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "images\\Category", category.Image);
+            File.Delete(fullPath);
 
             return new ServiceResponse()
             {
@@ -95,7 +104,7 @@ namespace Services.Services
                     Id = item.Id,
                     Name = item.Name,
                     Image = item.Image,
-                    ImageUrl = GeCategoryImageUrl(item.Image, request)
+                    ImageUrl = _imageService.GetImageUrl(item.Image, request).Result.Payload as string
                 };
                 categories.Add(done);
             }
@@ -113,15 +122,6 @@ namespace Services.Services
                 Payload = categories,
                 Message = $"Категорії успішно знайдено."
             };
-        }
-
-        private string GeCategoryImageUrl(string imageName , HttpRequest Request)
-        {
-            string port = string.Empty;
-            if (Request.Host.Port != null)
-                port = ":" + Request.Host.Port.ToString();
-            string url = $@"{Request.Scheme}://{Request.Host.Host}{port}/images/Category/{imageName}";
-            return url;
         }
 
         public async Task<ServiceResponse> ReserveAndRecoverAsync(int id)

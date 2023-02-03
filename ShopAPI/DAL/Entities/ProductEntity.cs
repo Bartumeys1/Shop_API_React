@@ -12,14 +12,11 @@ namespace DAL.Entities
     [Table("tblProducts")]
     public class ProductEntity : BaseEntity<int>
     {
-        [Required, StringLength(100)]
-        public string Name { get; set; }
-        [Required]
         public float Price { get; set; }   
-        [Required]
         public string Description { get; set; }
 
         public int CategoryId { get; set; }
         public virtual CategoryEntity Category { get; set; }
+        public virtual IQueryable<ProductImagesEntity> Images { get; set; }
     }
 }

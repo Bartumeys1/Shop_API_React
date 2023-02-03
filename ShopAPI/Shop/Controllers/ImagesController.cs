@@ -1,6 +1,8 @@
-﻿using DAL.Data.ViewModels;
-using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
+using Services.Interfaces;
+using Services.Models.Categories;
+using Services.Models.Images;
 
 namespace Shop.Controllers
 {
@@ -8,55 +10,46 @@ namespace Shop.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
-
+        private readonly IImageService _imageService;
+        public ImagesController(IImageService imageService)
+        {
+            _imageService = imageService;
+        }
         [HttpPost]
         [Route("UploadProductImage")]
-        public async Task<IActionResult> UploadProductImageAsync([FromForm] UploadImageViewModels model)
+        public async Task<IActionResult> UploadProductImageAsync([FromForm] UploadImageVM model)
         {
-            string fileName = string.Empty;
-            if (model.Image != null)
-            {
-                string fileExt = Path.GetExtension(model.Image.FileName);
-                string dir = Path.Combine(Directory.GetCurrentDirectory(), "images");
-                fileName = Path.GetRandomFileName() + fileExt;
-                using (var stream = System.IO.File.Create(Path.Combine(dir, fileName)))
-                {
-                    await model.Image.CopyToAsync(stream);
-                }
-            }
+            var result = await _imageService.AddProductImage(model, Request);
+            if (result.IsSuccess)
+                return Ok(result);
 
-            string port = string.Empty;
-            if (Request.Host.Port != null)
-                port = ":" + Request.Host.Port.ToString();
-            string url = $@"{Request.Scheme}://{Request.Host.Host}{port}/images/{fileName}";
-            return Ok(url);
+            return BadRequest(result);
         }
 
         [HttpPost]
         [Route("UploadCategoryImage")]
-        public async Task<IActionResult> UploadCategoryImageAsync([FromForm] UploadImageViewModels model)
+        public async Task<IActionResult> UploadCategoryImageAsync([FromForm] CreateCategoryVM model)
         {
-            string fileName = string.Empty;
-            if (model.Image != null)
-            {
-                string fileExt = Path.GetExtension(model.Image.FileName);
-                string dir = Path.Combine(Directory.GetCurrentDirectory(), "images/Category");
 
-                if(!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir); 
+            var result = await _imageService.AddCategoryImage(model);
+            if (result.IsSuccess)
+                return Ok(result);
 
-                fileName = Path.GetRandomFileName() + fileExt;
-                using (var stream = System.IO.File.Create(Path.Combine(dir, fileName)))
-                {
-                    await model.Image.CopyToAsync(stream);
-                }
-            }
-
-            string port = string.Empty;
-            if (Request.Host.Port != null)
-                port = ":" + Request.Host.Port.ToString();
-            string url = $@"{Request.Scheme}://{Request.Host.Host}{port}/images/Category/{fileName}";
-            return Ok(url);
+            return BadRequest(result);
         }
+
+        [HttpGet]
+        [Route("GetImageUrl")]
+        public async Task<IActionResult> UploadCategoryImageAsync(string name)
+        {
+
+            var result = await _imageService.GetImageUrl(name, Request);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+
     }
 }

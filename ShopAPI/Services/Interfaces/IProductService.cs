@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Models.Products;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Services.Interfaces
 {
@@ -12,5 +8,7 @@ namespace Services.Interfaces
     {
         Task<ServiceResponse> AddProductAsync(CreateProductVM model);
         Task<ServiceResponse> GetProductByCategory(ProductsByCategoryVM model);
+        Task<ServiceResponse> GetProductByIdAsync(int id);
+        Task<ServiceResponse> DeletetAsync(int id);
     }
 }

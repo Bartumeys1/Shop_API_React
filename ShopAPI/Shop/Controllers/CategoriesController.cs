@@ -30,7 +30,7 @@ namespace Shop.Controllers
         [Route("Delete")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            ServiceResponse result = await _categoryService.DeleteAsync(id);
+            ServiceResponse result = await _categoryService.DeleteAsync(id , Request);
             if (!result.IsSuccess)
                 return BadRequest(result);
 

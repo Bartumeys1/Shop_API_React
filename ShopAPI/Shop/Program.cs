@@ -6,6 +6,7 @@ using DAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Services.AutoMapper;
 using Services.Interfaces;
 using Services.Services;
 using Shop.Settings;
@@ -44,13 +45,17 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductServices>();
-
-
+builder.Services.AddScoped<IImageService, ImageService>();
 
 
 //Add Repositories
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+
+//Add AutoMapper
+builder.Services.AddAutoMapper(typeof(AutoMapperProductEntityProduct));
+builder.Services.AddAutoMapper(typeof(AutoMapperCategoryEntityCategoryEntity));
 
 //Add Cors
 builder.Services.AddCors();

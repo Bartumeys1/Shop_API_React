@@ -7,8 +7,8 @@ namespace Services.Interfaces
 {
     public interface ICategoryService
     {
-        Task<ServiceResponse> CreateAsync(CreateCategoryVM model);
-        Task<ServiceResponse> DeleteAsync(int id);
+        Task<ServiceResponse> CreateAsync(CreateCategoryVM model );
+        Task<ServiceResponse> DeleteAsync(int id , HttpRequest request);
         Task<ServiceResponse> GetByIdAsync(int id);
         Task<ServiceResponse> GetAllCategoriesAsync(HttpRequest request);
         Task<ServiceResponse> ReserveAndRecoverAsync(int id);

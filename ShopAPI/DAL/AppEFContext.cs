@@ -14,6 +14,7 @@ namespace DAL
 
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
+        public DbSet<ProductImagesEntity> ProductImages { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -32,10 +33,34 @@ namespace DAL
                     .IsRequired();
             });
 
+
+            builder.Entity<CategoryEntity>(u => { 
+                //properties
+                u.Property<string>("Name").HasMaxLength(50).IsRequired(); 
+                u.Property<string>("Image").HasMaxLength(255); 
+            });
+
             builder.Entity<ProductEntity>(p =>{
+                //properties
+                p.Property<string>("Name").HasMaxLength(100).IsRequired();
+                p.Property<float>("Price").IsRequired();
+                p.Property<string>("Description").IsRequired();
+
+                //relationship
                 p.HasOne<CategoryEntity>(p => p.Category)
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
+                .IsRequired();
+            });
+
+            builder.Entity<ProductImagesEntity>(p =>
+            {
+                p.Property<string>("Name").HasMaxLength(50).IsRequired();
+                p.Property<int>("Priority").IsRequired();
+
+                p.HasOne(img => img.Product)
+                .WithMany(p => p.Images)
+                .HasForeignKey(img => img.ProductId)
                 .IsRequired();
             });
 

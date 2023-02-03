@@ -1,6 +1,7 @@
 ﻿using DAL;
 using DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Services;
 using Services.Interfaces;
@@ -13,11 +14,9 @@ namespace Shop.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IProductRepository _productRepository;
-        public ProductsController(IProductService productService, IProductRepository productRepository)
+        public ProductsController(IProductService productService)
         {
             _productService = productService;
-            _productRepository= productRepository;
         }
 
 
@@ -34,20 +33,40 @@ namespace Shop.Controllers
             return BadRequest(res);
         }
 
+        [HttpGet]
+        [Route("Delete")]
+        public async Task<IActionResult> DeleteProductAsync( int id )
+        {
+             var result = await _productService.DeletetAsync(id);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+
         [HttpPost]
         [Route("GetAllByCategory")]
         public async Task<IActionResult> GetProductByCategory([FromBody] ProductsByCategoryVM model)
         {
-          // var result =  await _productService.GetProductByCategory(model);
+            var result = await _productService.GetProductByCategory(model);
 
-            var result = await _productRepository.Products.Where(p => p.CategoryId == model.CategoryId).ToListAsync();
+            if (result.IsSuccess)
+                return Ok(result);
 
-            var resp = new ServiceResponse
-            {
-                IsSuccess = true,
-                Payload = result
-            };
-            return Ok(resp);
+            return BadRequest(result);
+        }
+
+        [HttpGet]
+        [Route("GetById")]
+        public async Task<IActionResult> GetProductByIdAsync(int id)
+        {
+            var result = await _productService.GetProductByIdAsync(id);
+
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
         }
     }
 }
