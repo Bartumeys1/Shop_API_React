@@ -45,7 +45,6 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductServices>();
-builder.Services.AddScoped<IImageService, ImageService>();
 
 
 //Add Repositories

@@ -1,11 +1,5 @@
-﻿using DAL.Repositories;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace DAL.Entities
 {
@@ -14,7 +8,7 @@ namespace DAL.Entities
     {
         public float Price { get; set; }   
         public string Description { get; set; }
-
+        public string Slug { get; set; }
         public int CategoryId { get; set; }
         public virtual CategoryEntity Category { get; set; }
         public virtual IQueryable<ProductImagesEntity> Images { get; set; }

@@ -55,8 +55,8 @@ namespace DAL.Initializer
                 if (!categoryRepository.Categories.Any())
                 {
                     CategoryEntity[] categories = {
-                        new CategoryEntity() { Name = "Ноутбуки", DateCreated = DateTime.Now.ToUniversalTime() },
-                        new CategoryEntity() { Name = "Одяг", DateCreated = DateTime.Now.ToUniversalTime()}
+                        new CategoryEntity() { Name = "Ноутбуки", Slug="Laptop", DateCreated = DateTime.Now.ToUniversalTime() },
+                        new CategoryEntity() { Name = "Одяг", Slug="Clothes", DateCreated = DateTime.Now.ToUniversalTime()}
 
                     };
 
@@ -76,6 +76,7 @@ namespace DAL.Initializer
                             CategoryId = 1, 
                             Description="Простий ноутбук Hp Pavelion ... ", 
                             Price= 200.12F, 
+                            Slug="Hp Pavelion",
                             DateCreated = DateTime.Now.ToUniversalTime()
                         },
                         new ProductEntity() {
@@ -83,6 +84,7 @@ namespace DAL.Initializer
                             CategoryId = 1,
                             Description=" Найкращий ноутбук Alienwaer ... ",
                             Price= 1350.0F,
+                            Slug="Alienwaer",
                             DateCreated = DateTime.Now.ToUniversalTime()
                         },
                         new ProductEntity() {
@@ -90,6 +92,7 @@ namespace DAL.Initializer
                             CategoryId = 1,
                             Description="Ноутбук для дівчот ... ",
                             Price= 2000.0F,
+                            Slug="Macbook",
                             DateCreated = DateTime.Now.ToUniversalTime()
                         },
 
@@ -99,6 +102,7 @@ namespace DAL.Initializer
                             CategoryId = 2,
                             Description=" Пара гарних недорогіх джинсів ... ",
                             Price= 19.50F,
+                            Slug="Jeans",
                             DateCreated = DateTime.Now.ToUniversalTime()
                         }, 
                         new ProductEntity() {
@@ -106,6 +110,7 @@ namespace DAL.Initializer
                             CategoryId = 2,
                             Description="Недорогий світер ... ",
                             Price= 25.0F,
+                            Slug="Sweater",
                             DateCreated = DateTime.Now.ToUniversalTime()
                         },
                     };

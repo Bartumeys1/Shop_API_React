@@ -17,7 +17,8 @@ namespace Services.AutoMapper
         public AutoMapperProductEntityCreateProductVM()
         {
             CreateMap<CreateProductVM, ProductEntity>()
-                .ForMember(dest => dest.DateCreated , opt => opt.MapFrom(src => DateTime.UtcNow));
+                .ForMember(dest => dest.DateCreated, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.Slug, opt => opt.MapFrom(src=> AutoMapperHalper.GenerateSlug(src.Name)));
         }
     }
 }

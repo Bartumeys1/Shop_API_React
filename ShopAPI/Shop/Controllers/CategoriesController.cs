@@ -41,7 +41,7 @@ namespace Shop.Controllers
         [Route("GetById")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
-            ServiceResponse result = await _categoryService.GetByIdAsync(id);
+            ServiceResponse result = await _categoryService.GetByIdAsync(id , Request);
             if (!result.IsSuccess)
                 return BadRequest(result);
 

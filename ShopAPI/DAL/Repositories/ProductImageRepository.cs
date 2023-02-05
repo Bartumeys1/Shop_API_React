@@ -7,6 +7,6 @@ namespace DAL.Repositories
     {
         public ProductImageRepository(AppEFContext context):base(context){}
 
-        public IQueryable<ProductImagesEntity> Images { get; set; }
+        public IQueryable<ProductImagesEntity> Images => GetAll();
     }
 }

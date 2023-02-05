@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Services;
 using Services.Interfaces;
+using Services.Models.Images;
 using Services.Models.Products;
 
 namespace Shop.Controllers
@@ -63,6 +64,29 @@ namespace Shop.Controllers
         {
             var result = await _productService.GetProductByIdAsync(id);
 
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        [HttpPost]
+        [Route("CreateImageById")]
+        public async Task<IActionResult> SetProductImageByIdAsync([FromForm]UploadImageVM model)
+        {
+            var result = await _productService.SetProductImageByIdAsync(model);
+
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        [HttpGet]
+        [Route("GetAllImages")]
+        public async Task<IActionResult> GetAllProductImagesAsync(int id)
+        {
+            ServiceResponse result = await _productService.GetAllProductImagesAsync(id, Request);
             if (result.IsSuccess)
                 return Ok(result);
 

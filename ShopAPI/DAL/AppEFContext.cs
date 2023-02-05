@@ -38,6 +38,7 @@ namespace DAL
                 //properties
                 u.Property<string>("Name").HasMaxLength(50).IsRequired(); 
                 u.Property<string>("Image").HasMaxLength(255); 
+                u.Property<string>("Slug").HasMaxLength(255); 
             });
 
             builder.Entity<ProductEntity>(p =>{
@@ -45,6 +46,8 @@ namespace DAL
                 p.Property<string>("Name").HasMaxLength(100).IsRequired();
                 p.Property<float>("Price").IsRequired();
                 p.Property<string>("Description").IsRequired();
+                p.Property<string>("Slug").HasMaxLength(255);
+
 
                 //relationship
                 p.HasOne<CategoryEntity>(p => p.Category)
