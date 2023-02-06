@@ -12,6 +12,7 @@ namespace Services.AutoMapper
         public ProductImage()
         {
             CreateMap<UploadImageVM, ProductImagesEntity>();
+            CreateMap<ProductImagesEntity, ResponseProductImageVM>();
         }
     }
 }

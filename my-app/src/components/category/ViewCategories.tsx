@@ -10,8 +10,7 @@ const ViewCategories: React.FC = ({}) => {
 
   useEffect(()=>{
     GetCategoryList();
-    console.log(list);
-    
+      
   },[]);
 
  const testCart = list.map((cat) => (
@@ -20,6 +19,7 @@ const ViewCategories: React.FC = ({}) => {
     id={cat.id.toString()}
     name={cat.name}
     imageUrl ={cat.imageUrl}
+    slug = {cat.slug}
     />
   ));
    return (

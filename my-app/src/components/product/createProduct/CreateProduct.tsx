@@ -1,50 +1,127 @@
-import { useRef } from "react";
-import { useDispatch } from "react-redux";
-import { redirect, useNavigate } from "react-router-dom";
-import http from "../../../http_common";
+import { ErrorMessage, Field, Formik } from "formik";
+import { useEffect, useState } from "react";
+import { useActions } from "../../../hooks/useActions";
+import { useTypedSelector } from "../../../hooks/useTypedSelector";
+import { ICreateProduct } from "./store/type";
 
 
 const CreateProduct =() => {
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const {GetCategoryList} = useActions();
+    const {list , message , isLoaded  } = useTypedSelector(store=>store.category);
+    const [createProduct, setCreateProduct] = useState<ICreateProduct>({
+        name: "",
+        categoryId: "red",
+        description: "",
+        price: 0,
+      });
 
-    const inputRef1 = useRef<HTMLInputElement>(null);
-    const inputRef2 = useRef<HTMLInputElement>(null);
+    useEffect(()=>{
+        GetCategoryList();
+    },[]);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
 
-        const product={
-            name: inputRef1.current?.value,
-            detail: inputRef2.current?.value,
-        }
-        
-        http.post("/api/products",product).then((res) => {
-            dispatch({ type: "CREATE_PRODUCT", payload: res.data });
-
-        navigate("/");
-          });
-        
+    const sendDataHandler = (product:ICreateProduct) => {
+        console.log(product);
     }
 
+    const errorMessage = (fieldType: string, color: string = "red") => {
+        return (
+          <ErrorMessage name={fieldType}>
+            {(msg) => <div style={{ color: color }}>{msg}</div>}
+          </ErrorMessage>
+        );
+      };
+
+
+      const selectItems = list.map( (cat , index)=>(
+        <option key={cat.id} value={cat.id}>{cat.name}</option>
+      ));
+
     return (
-        <div>
-        <h1 className="text-center">Створення продукту</h1>
-    <form onSubmit={handleSubmit}  className="col-md-6 offset-md-3">
-        <div className="mb-3">
-            <label >Назва
-            <input type="text"  className="form-control"  id="name" name="name" ref={inputRef1}/>
-            </label>
+      <>
+        <div className="container py-5 h-100">
+          <h1 className="text-center"> Реєстрація крок 1 </h1>
+          <div className="row d-flex justify-content-center h-100">
+            <div className="col-md-7 col-lg-5 col-xl-5">
+              <Formik
+                initialValues={createProduct}
+                onSubmit={sendDataHandler}
+              >
+                {(formik) => (
+                  <form onSubmit={formik.handleSubmit}>
+                    {/* Email input  */}
+                    <div className="form-floating mb-4">
+                      <Field
+                        name="name"
+                        type="text"
+                        className="form-control form-control-lg"
+                        value={formik.values.name}
+                        placeholder="Ім'я"
+                      />
+                      <label htmlFor="email" className="form-label">
+                        Ім'я
+                      </label>
+                      {errorMessage("name")}
+                    </div>
+
+                    {/* First name input  */}
+                    <div className="form-floating mb-4">
+                      <Field
+                        name="description"
+                        type="text"
+                        className="form-control form-control-lg"
+                        value={formik.values.description}
+                        placeholder="description"
+                      />
+                      <label htmlFor="firstName" className="form-label">
+                        description
+                      </label>
+                      {errorMessage("firstName")}
+                    </div>
+
+                    {/* Second name input  */}
+                    <div className="form-floating mb-4">
+                      <Field
+                        name="price"
+                        type="text"
+                        className="form-control form-control-lg"
+                        value={formik.values.price}
+                        placeholder="price"
+                      />
+                      <label htmlFor="secondName" className="form-label">
+                        price
+                      </label>
+                      {errorMessage("secondName")}
+                    </div>
+
+                    {/* Category field input  */}
+                    <Field
+                      as="select"
+                      name="categoryId"
+                      className="form-control form-control-lg"
+                      onChange={formik.handleChange}
+                    >
+                      <option defaultValue={formik.values.categoryId}>
+                        Default Value
+                      </option>
+                     {selectItems}
+                    </Field>
+
+                    {/* Submit button  */}
+                    <button
+                      type="submit"
+                      className="btn btn-primary btn-lg btn-block"
+                    >
+                      Далі
+                    </button>
+                  </form>
+                )}
+              </Formik>
+            </div>
+          </div>
         </div>
-        <div className="mb-3">
-            <label className="form-label">Опис
-            <input type="text"  className="form-control"  id="description" name="description" ref={inputRef2}/>
-            </label>
-        </div>
-        <button className=" btn btn-primary btn-lg" type="submit" >Додати товар</button>
-    </form>
-      </div>
+      </>
     );
 }
 

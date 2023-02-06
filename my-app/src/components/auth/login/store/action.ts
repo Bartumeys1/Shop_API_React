@@ -13,6 +13,7 @@ export  const Login = (user:IUserLogin) => async (dispatch: Dispatch<AccountAuth
             type: AccountActionTypes.LOGIN_USER, 
             payload: {
               name:userInfo.name,
+              isAuth: true,
               roles:userInfo.roles
             }});
 
@@ -34,6 +35,7 @@ export  const GoogleExternalLogin = (googleData:IGoogleExternalLogin) => async (
             type: AccountActionTypes.LOGIN_USER, 
             payload: {
               name:userInfo.name,
+              isAuth:true,
               roles:userInfo.roles
             }});
 
@@ -50,6 +52,7 @@ export  const Logout = () => async (dispatch: Dispatch<AccountAuth>) => {
             type: AccountActionTypes.LOGOUT_USER, 
             payload: {
               name:"",
+              isAuth: false,
               roles:[]
             }});
 

@@ -2,9 +2,6 @@ import { IProductState, ProductActions, ProductActionTypes } from "./type";
 
 const initialState : IProductState={
     list:[],
-    current_page: 0,
-    total:0,
-    count_pages:0,
     isLoaded:false
 };
 

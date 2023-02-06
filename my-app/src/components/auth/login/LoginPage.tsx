@@ -1,16 +1,20 @@
 import { useFormik } from "formik";
 import {  useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useActions } from "../../../hooks/useActions";
+import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { IGoogleExternalLogin, IUserLogin } from "./store/type";
 
 
 const LoginPage =() => {
     
   const {Login , GoogleExternalLogin}=useActions();
+  const {isAuth} = useTypedSelector(store=>store.account);
   const [loginData, setloginData] = useState<IUserLogin>({
     email:"",
     password:""
   });
+const navigat = useNavigate();
 
     const handleLoginSuccess = (res: any) => {  
         const {credential} = res;
@@ -19,13 +23,7 @@ const LoginPage =() => {
           provider : "Google",
           token: credential
         }
-        
-        // http.post<IUserLoginResponse>("api/Account/GoogleExternalLogin",element).then((resp)=>{
-        //   const {data} = resp;
 
-        //   const userInfo:IUserState = jwtDecode(data.token);
-        //  console.log("userInfo",userInfo);
-        // })
         GoogleExternalLogin(element);
       };
     
@@ -55,6 +53,10 @@ const LoginPage =() => {
       });
 
       const{handleSubmit , handleChange, values}=formik;
+
+      if(isAuth)
+      navigat("/");
+      
     return (
         <>
   <div className="container py-5 h-100">

@@ -35,7 +35,7 @@ export interface IRegisterStepOneValues{
 }
 
 export interface IRegisterStepTwoValues{
-    password: string|undefined,
-    confirmPassword:string|undefined
+    password: string,
+    confirmPassword:string
 }
 

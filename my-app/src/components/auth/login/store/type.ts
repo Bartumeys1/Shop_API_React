@@ -13,6 +13,7 @@ export interface IUserLoginResponse{
 
 export interface IUserState {
     name?:string,
+    isAuth:boolean,
     roles:Array<string>
   }
 

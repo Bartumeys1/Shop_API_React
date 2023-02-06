@@ -46,11 +46,13 @@ namespace Shop.Controllers
         }
 
 
-        [HttpPost]
+        [HttpGet]
         [Route("GetAllByCategory")]
-        public async Task<IActionResult> GetProductByCategory([FromBody] ProductsByCategoryVM model)
+        public async Task<IActionResult> GetProductByCategory(int id )
         {
-            var result = await _productService.GetProductByCategory(model);
+            ProductsByCategoryVM model = new ProductsByCategoryVM();
+            model.CategoryId = id;
+            var result = await _productService.GetProductByCategory(model, Request);
 
             if (result.IsSuccess)
                 return Ok(result);
@@ -63,6 +65,18 @@ namespace Shop.Controllers
         public async Task<IActionResult> GetProductByIdAsync(int id)
         {
             var result = await _productService.GetProductByIdAsync(id);
+
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        [HttpGet]
+        [Route("GetBySlug")]
+        public async Task<IActionResult> GetProductBySlugAsync(string slug)
+        {
+            var result = await _productService.GetProductBySlugAsync(slug);
 
             if (result.IsSuccess)
                 return Ok(result);

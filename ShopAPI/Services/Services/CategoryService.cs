@@ -46,7 +46,7 @@ namespace Services.Services
 
 
 
-        public async Task<ServiceResponse> DeleteAsync(int id, HttpRequest request)
+        public async Task<ServiceResponse> DeleteAsync(int id)
         {
             CategoryEntity category = await _categoryRepository.GetById(id);
             if (category == null)
@@ -104,6 +104,15 @@ namespace Services.Services
 
         }
 
+        public async Task<ServiceResponse> GetBySlugAsync(string slug, HttpRequest request)
+        {
+            CategoryEntity category = await _categoryRepository.Categories.Where(x => x.Slug == slug).FirstOrDefaultAsync();
+            if (category == null)
+                return GetServiceResponse(false, "Категорію не знайдено");
+
+            return await GetByIdAsync(category.Id, request);
+        }
+
         private async Task<string> SaveBase64InFolder(string folder, string imageBase64, string Name = "testName")
         {
             //test
@@ -141,5 +150,6 @@ namespace Services.Services
             return url;
         }
 
+       
     }
 }

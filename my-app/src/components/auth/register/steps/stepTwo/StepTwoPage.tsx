@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import { useState } from "react";
-import { IRegisterStepTwoValues, IStepTwoProps } from "../../store/type";
+import { IRegisterStepTwoValues, IStepTwoProps, IStepTwoResult } from "../../store/type";
 import { RegistrationStepTwoSchema } from "../../store/validator/validation";
 
 const StepTwoPage: React.FC<IStepTwoProps> = ({ onStepNext }) => {
@@ -9,11 +9,11 @@ const StepTwoPage: React.FC<IStepTwoProps> = ({ onStepNext }) => {
     confirmPassword: "",
   });
 
-  const onNext = () => {
+  const onNext = (resp:IStepTwoResult) => {
     console.log("One step result");
     onStepNext({
-      password: "pass1",
-      confirmPassword: "confirm pass 1",
+      password: resp.password ,
+      confirmPassword: resp.confirmPassword ,
     });
   };
 

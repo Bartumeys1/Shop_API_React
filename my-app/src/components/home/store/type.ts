@@ -2,12 +2,14 @@ export interface ICategoryItem {
   id: number|string
   imageUrl:string,
   name: string,
+  slug:string
   }
 
 export interface ICategoryResponse {
   payload: Array<ICategoryItem>
   message:string,
 }
+
 
 export interface ICategoryState {
     list: Array<ICategoryItem>

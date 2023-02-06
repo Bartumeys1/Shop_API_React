@@ -2,17 +2,19 @@ interface ICategoryProps {
   id: string | undefined;
   name: string;
   imageUrl: string;
+  slug: string;
 }
 
-const CategoryCart: React.FC<ICategoryProps> = ({ id, name, imageUrl }) => {
+const CategoryCart: React.FC<ICategoryProps> = ({ id, name, imageUrl , slug }) => {
    const handelCilck = ()=>{
     console.log(id);
 
    }
+   
   return (
     <>
       <div key={id} id={id} className="card h-100">
-        <a href={`category/${name}`}
+        <a href={`category/${slug}`}
           style={{ color: "black", textDecoration: "none" }}
           onClick={handelCilck}
         >

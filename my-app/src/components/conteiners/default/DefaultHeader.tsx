@@ -3,7 +3,7 @@ import { useActions } from "../../../hooks/useActions";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 
 const DefaultHeader = () => {
-  const { name } = useTypedSelector((store) => store.account);
+  const { isAuth , name } = useTypedSelector((store) => store.account);
   const{Logout} = useActions();
   return (
     <header>
@@ -32,7 +32,7 @@ const DefaultHeader = () => {
               </li>
             </ul>
             <ul className="navbar-nav">
-              {!name ? (
+              {!isAuth ? (
                 <>
                   <li className="nav-item">
                     <Link

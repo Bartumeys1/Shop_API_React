@@ -1,37 +1,25 @@
 export interface IProductItem {
-    id: number,
-    name: string,
-    description: string,
-    price: number
-
-    
+    id:string | number,
+    name:string,
+    price: number,
+    images: Array<IImageItem>,
+    description:string
   }
+  interface IImageItem{
+    imageUrl?:string,
+    name?:string,
+    priority: string| number
+}
 
-  export interface IProductsByCategory{
-    CategoryId:number
-  }
 
 export interface IProductResponse {
     payload: Array<IProductItem>,
-    current_page: number,
-    total: number,
-    last_page: number
 }
 
 export interface IProductState {
     list: Array<IProductItem>
-    current_page: number,
-    total: number,
-    count_pages: number,
     isLoaded:boolean
 }
-export interface IProductSearch {
-    name?: string,
-    category?:string,
-    page?: number|string|null
-    count?:number|string|null
-}
-
 
   export enum ProductActionTypes {
     PRODUCT_LIST = "PRODUCT_LIST",

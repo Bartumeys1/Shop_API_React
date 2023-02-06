@@ -30,7 +30,7 @@ namespace Shop.Controllers
         [Route("Delete")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            ServiceResponse result = await _categoryService.DeleteAsync(id , Request);
+            ServiceResponse result = await _categoryService.DeleteAsync(id );
             if (!result.IsSuccess)
                 return BadRequest(result);
 
@@ -42,6 +42,17 @@ namespace Shop.Controllers
         public async Task<IActionResult> GetByIdAsync(int id)
         {
             ServiceResponse result = await _categoryService.GetByIdAsync(id , Request);
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("GetBySlug")]
+        public async Task<IActionResult> GetBySlugAsync(string slug)
+        {
+            ServiceResponse result = await _categoryService.GetBySlugAsync(slug, Request);
             if (!result.IsSuccess)
                 return BadRequest(result);
 

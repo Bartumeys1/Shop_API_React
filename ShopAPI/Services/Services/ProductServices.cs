@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
-using DAL;
 using DAL.Entities;
 using DAL.Interfaces;
-using DAL.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Models.Images;
 using Services.Models.Products;
 using Services.Settings;
-using System.Reflection.Metadata.Ecma335;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Services.Services
 {
@@ -68,23 +64,34 @@ namespace Services.Services
             return GetServiceResponse(true, "Фотографії успішно завантажено", imageVm);
         }
 
-        public async Task<ServiceResponse> GetProductByCategory(ProductsByCategoryVM model)
+        public async Task<ServiceResponse> GetProductByCategory(ProductsByCategoryVM model , HttpRequest request)
         {
             var result = await _repository.Products.Where(p => p.CategoryId == model.CategoryId).ToListAsync();
             if (result == null)
                 return GetServiceResponse(false, "Продукт не знайдено");
 
+            List<ProductVM> productsVM = _mapper.Map<List<ProductVM>>(result);
+            foreach (var product in productsVM)
+            {
+                List<ResponseProductImageVM> images = _mapper.Map<List<ResponseProductImageVM>>(
+                    await _imageRepository.Images.Where(x => x.ProductId == product.Id).ToListAsync());
+                foreach (var item in images)
+                {
+                    item.ImageUrl = GetImageUrl(item.Name, ImageSettings.PRODUCTS_FOLDER, request);
+                }
+                product.Images = images;
+            }
 
-            return GetServiceResponse(true, "Продукти завантажено успішно", result);
+            return GetServiceResponse(true, "Продукти завантажено успішно", productsVM);
         }
 
         public async Task<ServiceResponse> GetProductByIdAsync(int id)
         {
-            var result = await _repository.GetById(id);
-
-           var resu = await GetProductVM(id);
+            ProductEntity result = await _repository.GetById(id);
             if (result == null)
                 return GetServiceResponse(false, "Продукт не знайдено");
+
+            ProductVM resu = await GetProductVM(result);
 
             return GetServiceResponse(true, "Продукт знайдено.", result);
         }
@@ -107,11 +114,19 @@ namespace Services.Services
 
             return GetServiceResponse(true,"Фотографія успішно збережена");
         }
-
-        private async Task<ProductVM> GetProductVM(int id)
+        public async Task<ServiceResponse> GetProductBySlugAsync(string slug)
         {
-            var productEntity = await _repository.GetById(id);
-            ProductVM productVM  = _mapper.Map<ProductVM>(productEntity);
+            ProductEntity product = await _repository.Products.Where(x=>x.Slug==slug).FirstOrDefaultAsync();
+            if(product== null)
+                return GetServiceResponse(false, "Продукт не знайдено");
+
+            return GetServiceResponse(true, "Ok" , product);
+        }
+
+        private async Task<ProductVM> GetProductVM(ProductEntity model)
+        {
+
+            ProductVM productVM  = _mapper.Map<ProductVM>(model);
             return productVM;
         }
 
@@ -153,5 +168,6 @@ namespace Services.Services
             string url = $@"{Request.Scheme}://{Request.Host.Host}{port}/{folder}/{imageName}";
             return url;
         }
+
     }
 }

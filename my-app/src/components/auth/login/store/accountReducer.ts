@@ -2,6 +2,7 @@ import { AccountActionTypes, AccountAuth, IUserState } from "./type";
 
 const initialState : IUserState={
     name:"",
+    isAuth:false,
     roles:[]
 };
 
