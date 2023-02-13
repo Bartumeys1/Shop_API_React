@@ -64,7 +64,7 @@ namespace Shop.Controllers
         [Route("GetById")]
         public async Task<IActionResult> GetProductByIdAsync(int id)
         {
-            var result = await _productService.GetProductByIdAsync(id);
+            var result = await _productService.GetProductByIdAsync(id, Request);
 
             if (result.IsSuccess)
                 return Ok(result);
@@ -76,7 +76,7 @@ namespace Shop.Controllers
         [Route("GetBySlug")]
         public async Task<IActionResult> GetProductBySlugAsync(string slug)
         {
-            var result = await _productService.GetProductBySlugAsync(slug);
+            var result = await _productService.GetProductBySlugAsync(slug,Request);
 
             if (result.IsSuccess)
                 return Ok(result);

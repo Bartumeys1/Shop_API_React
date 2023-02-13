@@ -10,8 +10,8 @@ namespace Services.Interfaces
     {
         Task<ServiceResponse> AddProductAsync(CreateProductVM model);
         Task<ServiceResponse> GetProductByCategory(ProductsByCategoryVM model, HttpRequest request);
-        Task<ServiceResponse> GetProductByIdAsync(int id);
-        Task<ServiceResponse> GetProductBySlugAsync(string slug);
+        Task<ServiceResponse> GetProductByIdAsync(int id, HttpRequest request);
+        Task<ServiceResponse> GetProductBySlugAsync(string slug, HttpRequest request);
         Task<ServiceResponse> DeletetAsync(int id);
         Task<ServiceResponse> SetProductImageByIdAsync(UploadImageVM model);
         Task<ServiceResponse> GetAllProductImagesAsync(int id , HttpRequest request);

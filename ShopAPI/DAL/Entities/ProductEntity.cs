@@ -11,6 +11,6 @@ namespace DAL.Entities
         public string Slug { get; set; }
         public int CategoryId { get; set; }
         public virtual CategoryEntity Category { get; set; }
-        public virtual IQueryable<ProductImagesEntity> Images { get; set; }
+        public virtual ICollection<ProductImagesEntity> Images { get; set; }
     }
 }

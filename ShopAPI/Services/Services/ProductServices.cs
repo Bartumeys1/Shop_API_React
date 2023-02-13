@@ -15,7 +15,7 @@ namespace Services.Services
         private readonly IProductRepository _repository;
         private readonly IMapper _mapper;
         private readonly IProductImageRepository _imageRepository;
-        public ProductServices(IProductRepository productRepository,  IMapper mapper, IProductImageRepository imageRepository)
+        public ProductServices(IProductRepository productRepository, IMapper mapper, IProductImageRepository imageRepository)
         {
             _repository = productRepository;
             _mapper = mapper;
@@ -34,7 +34,7 @@ namespace Services.Services
 
         public async Task<ServiceResponse> DeletetAsync(int id)
         {
-            var product = await GetProductByIdAsync(id);
+            ProductEntity product = await _repository.GetById(id);
             if (product == null)
                 return GetServiceResponse(false, "Продукт не знайдено");
 
@@ -43,91 +43,76 @@ namespace Services.Services
             return GetServiceResponse(true, "Продукт видалено");
         }
 
-        public async Task<ServiceResponse> GetAllProductImagesAsync(int id , HttpRequest request)
+        public async Task<ServiceResponse> GetAllProductImagesAsync(int id, HttpRequest request)
         {
-            ServiceResponse result = await GetProductByIdAsync(id);
-            if (!result.IsSuccess)
+            ProductEntity result = await _repository.GetById(id);
+            if (result == null)
                 return GetServiceResponse(false, "Продук не знайдено");
 
-            List<ProductImagesEntity> res = await _imageRepository.Images.Where(i=>i.ProductId== id).ToListAsync();
-            List<ResponseProductImageVM> imageVm = new List<ResponseProductImageVM>();
-            foreach (var imageEntity in res)
-            {
-                imageVm.Add(new ResponseProductImageVM
-                {
-                    Name = imageEntity.Name,
-                    Priority = imageEntity.Priority,
-                    ImageUrl = GetImageUrl(imageEntity.Name, ImageSettings.PRODUCTS_FOLDER, request)
-                });
-            }
+            List<ProductImagesEntity> res = await _imageRepository.Images.Where(i => i.ProductId == id).ToListAsync();
+            List<ResponseProductImageVM> imageVm = _mapper.Map<List<ResponseProductImageVM>>(res);
+            foreach (var image in imageVm)
+                image.ImageUrl = GetImageUrl(image.Name, ImageSettings.PRODUCTS_FOLDER, request);
 
             return GetServiceResponse(true, "Фотографії успішно завантажено", imageVm);
         }
 
-        public async Task<ServiceResponse> GetProductByCategory(ProductsByCategoryVM model , HttpRequest request)
+        public async Task<ServiceResponse> GetProductByCategory(ProductsByCategoryVM model, HttpRequest request)
         {
-            var result = await _repository.Products.Where(p => p.CategoryId == model.CategoryId).ToListAsync();
+            var result = await _repository.Products.Include(x => x.Images).Where(p => p.CategoryId == model.CategoryId).ToListAsync();
             if (result == null)
                 return GetServiceResponse(false, "Продукт не знайдено");
 
             List<ProductVM> productsVM = _mapper.Map<List<ProductVM>>(result);
             foreach (var product in productsVM)
-            {
-                List<ResponseProductImageVM> images = _mapper.Map<List<ResponseProductImageVM>>(
-                    await _imageRepository.Images.Where(x => x.ProductId == product.Id).ToListAsync());
-                foreach (var item in images)
-                {
-                    item.ImageUrl = GetImageUrl(item.Name, ImageSettings.PRODUCTS_FOLDER, request);
-                }
-                product.Images = images;
-            }
+                foreach (var image in product.Images)
+                    image.ImageUrl = GetImageUrl(image.Name, ImageSettings.PRODUCTS_FOLDER, request);
+
 
             return GetServiceResponse(true, "Продукти завантажено успішно", productsVM);
         }
 
-        public async Task<ServiceResponse> GetProductByIdAsync(int id)
+        public async Task<ServiceResponse> GetProductByIdAsync(int id, HttpRequest request)
         {
-            ProductEntity result = await _repository.GetById(id);
-            if (result == null)
+            ProductEntity entity = await _repository.Products.Include(x=>x.Images).Where(p=>p.Id == id).FirstOrDefaultAsync();
+            if (entity == null)
                 return GetServiceResponse(false, "Продукт не знайдено");
 
-            ProductVM resu = await GetProductVM(result);
+            ProductVM productVM = _mapper.Map<ProductVM>(entity);
+            foreach (var image in productVM.Images)
+                image.ImageUrl = GetImageUrl(image.Name, ImageSettings.PRODUCTS_FOLDER, request);
 
-            return GetServiceResponse(true, "Продукт знайдено.", result);
+            return GetServiceResponse(true, "Продукт знайдено.", productVM);
         }
 
         public async Task<ServiceResponse> SetProductImageByIdAsync(UploadImageVM model)
         {
-            ServiceResponse res = await GetProductByIdAsync(model.ProductId);
-            if (!res.IsSuccess)
-                return res;
+            ProductEntity res = await _repository.GetById(model.ProductId);
+            if (res == null)
+                return GetServiceResponse(false, "Продукт не знайдено");
 
-            var fileName = await SaveFormFileInFolder(ImageSettings.PRODUCTS_FOLDER,model.Image);
+            var fileName = await SaveFormFileInFolder(ImageSettings.PRODUCTS_FOLDER, model.Image);
             if (fileName == null)
                 return GetServiceResponse(false, "Щось пішло не так при збереженні фотографії продукту");
 
-            int lastPriority =await _imageRepository.Images.Where(x=>x.ProductId == model.ProductId).CountAsync();
-            ProductImagesEntity imagesEntity =_mapper.Map<ProductImagesEntity>(model);
-            imagesEntity.Name= fileName;
-            imagesEntity.Priority = lastPriority+1;
+            int lastPriority = await _imageRepository.Images.Where(x => x.ProductId == model.ProductId).CountAsync();
+            ProductImagesEntity imagesEntity = _mapper.Map<ProductImagesEntity>(model);
+            imagesEntity.Name = fileName;
+            imagesEntity.Priority = lastPriority + 1;
             await _imageRepository.Create(imagesEntity);
 
-            return GetServiceResponse(true,"Фотографія успішно збережена");
+            return GetServiceResponse(true, "Фотографія успішно збережена");
         }
-        public async Task<ServiceResponse> GetProductBySlugAsync(string slug)
+        public async Task<ServiceResponse> GetProductBySlugAsync(string slug, HttpRequest request)
         {
-            ProductEntity product = await _repository.Products.Where(x=>x.Slug==slug).FirstOrDefaultAsync();
-            if(product== null)
+            ProductEntity product = await _repository.Products.Include(x => x.Images).Where(x => x.Slug == slug).FirstOrDefaultAsync();
+            if (product == null)
                 return GetServiceResponse(false, "Продукт не знайдено");
 
-            return GetServiceResponse(true, "Ok" , product);
-        }
-
-        private async Task<ProductVM> GetProductVM(ProductEntity model)
-        {
-
-            ProductVM productVM  = _mapper.Map<ProductVM>(model);
-            return productVM;
+            ProductVM productVM = _mapper.Map<ProductVM>(product);
+            foreach (var image in productVM.Images)
+                image.ImageUrl = GetImageUrl(image.Name, ImageSettings.PRODUCTS_FOLDER, request);
+            return GetServiceResponse(true, "Ok", productVM);
         }
 
         private ServiceResponse GetServiceResponse(bool isSuccess, string message, object payload = null)

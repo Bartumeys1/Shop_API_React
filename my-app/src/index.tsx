@@ -8,11 +8,17 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import {Provider} from "react-redux";
 import {store} from "./store";
+import { setAuthUserByToken } from "./components/auth/login/store/action";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+var token = localStorage.getItem("token")
+if(token){
+  setAuthUserByToken(token , store.dispatch);
+  //downloadCartData();
+}
 
 root.render(
     <Provider store={store}>
